@@ -47,8 +47,3 @@ GymHum is an all-in-one fitness web application that helps users track workouts,
 - **State Management**: Browser LocalStorage
 - **API**: Integrated with mock fitness API
 - **Design**: Responsive layout works on all devices
-
-## Support
-For bug reports or feature requests:
-- Email: support@gymhum.app
-- GitHub Issues
