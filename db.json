@@ -1,14 +1,53 @@
 {
-    "articles": [
-      {
-        "id": 1,
-        "title": "Example Article",
-        "content": "This is an example."
-      },
-      {
-        "id": 2,
-        "title": "Second Article",
-        "content": "This is also an example."
-      }
-    ]
-  }
+  "workouts": [
+    {
+      "id": 1,
+      "name": "Beginner Full-Body Workout",
+      "category": "Full Body",
+      "duration": "20 mins",
+      "description": "Perfect for starters! 3 sets of squats, push-ups, and lunges."
+    },
+    {
+      "id": 2,
+      "name": "Yoga Flow",
+      "category": "Yoga",
+      "duration": "30 mins",
+      "description": "Relaxing stretches and poses for flexibility."
+    },
+    {
+      "id": 3,
+      "name": "Intermediate Full-Body Workout",
+      "category": "Full Body",
+      "duration": "30 mins",
+      "description": "An advanced full-body routine. 4 sets of squats, push-ups, lunges, and burpees."
+    }
+  ],
+  "nutrition": [
+    {
+      "id": 1,
+      "name": "Avocado Toast",
+      "calories": 350,
+      "ingredients": ["Bread", "Avocado", "Eggs", "Salt"]
+    },
+    {
+      "id": 2,
+      "name": "Protein Smoothie",
+      "calories": 250,
+      "ingredients": ["Banana", "Spinach", "Protein Powder", "Almond Milk"]
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "High-Waist Leggings",
+      "price": 45,
+      "image": "https://www.firmabs.com/cdn/shop/files/01_8651f86c-4ffe-4a85-a874-0fc56b3b405d.jpg?v=1706078288&width=1000"
+    },
+    {
+      "id": 2,
+      "name": "Sports Bra",
+      "price": 25,
+      "image": "https://m.media-amazon.com/images/I/710op-PZrkL._AC_SL1500_.jpg"
+    }
+  ]
+}
