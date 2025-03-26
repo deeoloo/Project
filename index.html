@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymHum-Your Fitness Partner</title>
+    <link rel= "stylesheet" href="index.css">
+</head>
+<body>
+    <header>
+        <h1>GymHum</h1>
+    </header>
+    <nav>
+        <ul>
+          <li><button id="nav-workouts">Workouts</button></li>
+          <li><button id="nav-nutrition">Nutrition</button></li>
+          <li><button id="nav-products">Products</button></li>
+          <li><button id="nav-user-progress">Profile</button></li>
+          <li><button id="nav-community">Community</button></li>
+        </ul>
+      </nav>
+    <main>
+        <section id = "workouts">
+            <h2>Workout Plans</h2>
+            <div id = "workout-lists"> </div>
+        </section>
+
+        <section id="nutrition">
+            <h2>Nutrition Guides</h2>
+            <input type="text" id="recipe-research" placeholder="Search for recipes">
+            <div id="recipe-list"></div>
+        </section>
+
+        <section id="products">
+            <h2>Gymwear Marketplace</h2>
+                <span id="cart-counter" class="cart-counter">0</span>
+              
+            <div id="product-list"></div>
+        </section>
+
+        <section id="profile">
+            <h2>Your Profile</h2>
+            <div id="user-progress" style="display:none"></div>
+        </section>
+        <section id ="community" style="display: none;">
+            <h2>Community</h2>
+            <div id="community-section"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 GymHum. All rights reserved.</p>
+      </footer>
+    <script src="index.js"></script>
+</body>
+</html>
