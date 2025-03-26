@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const navButtons = document.querySelectorAll("nav button");
-  const API_BASE_URL = "https://json-mock-api-vk2o.onrender.com/api";
+  //Api
   const validSections = ['workouts', 'nutrition', 'products', 'profile', 'community'];
 
   // Initialize data structures
