@@ -16,9 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!elements.workouts || !elements.nutrition || !elements.products) {
     console.error("Missing critical DOM elements!");
   }
-
+  //the app constants and variables
   const navButtons = document.querySelectorAll("nav button");
-  //Api
+  const API_BASE_URL = "https://json-mock-api-vk2o.onrender.com/api";
   const validSections = ['workouts', 'nutrition', 'products', 'profile', 'community'];
 
   // Initialize data structures
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
   // SECTION 3: WORKOUTS SECTION
-  
+  //sets up a workout filter functionality
   function initializeWorkoutFilters() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     const cardsContainer = elements.workouts.querySelector('.workout-cards-container');
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const wasActive = this.classList.contains("active");
         const allWorkouts = elements.workouts._workoutData || [];
         const category = this.dataset.category;
-        
+        //toggles visibility if clicking active filter
         if (wasActive) {
           cardsContainer.style.display = cardsContainer.style.display === 'none' ? 'block' : 'none';
           return;
@@ -89,14 +89,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (cardsContainer.style.display === 'none') {
           cardsContainer.style.display = 'block';
         }
-        
+        //filters workout by category
         const filtered = category === 'all' 
           ? allWorkouts 
           : allWorkouts.filter(w => w.category === category);
-        
+         
+         //update active button
         filterButtons.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
-        
+        //render filtered wourkout
         cardsContainer.innerHTML = filtered.map(item => `
           <div class="workout-card">
             <h3>${item.name}</h3>
@@ -111,13 +112,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
-
+//sets up an eventlistener for workout completion
   function setUpWorkoutEventListener(workoutsData) {
     document.querySelectorAll('.complete-workout').forEach(btn => {
       btn.addEventListener('click', () => {
         const workoutId = btn.dataset.id;
         const workout = workoutsData.find(w => w.id == workoutId);
         if (!profileData.completedWorkouts.includes(workoutId)) {
+          //update profile with completed workout
           profileData.completedWorkouts.push(workoutId);
           profileData.completedWorkoutDetails.push({
             id: workoutId,
@@ -126,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           localStorage.setItem('profile', JSON.stringify(profileData));
           updateProfileDisplay(profileData);
-          
+          //update the community if challenge is active 
           if (profileData.communityChallenges.includes('30-Day Fitness Journey') && 
               document.getElementById('community').style.display === 'block') {
             updateCommunityDisplay();
@@ -138,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // SECTION 4: NUTRITION SECTION
-  
+  //sets up the recipe search functionality
   function setupNutritionSearch(data) {
     if (elements.recipeSearch) {
       elements.recipeSearch.addEventListener("input", (e) => {
@@ -151,13 +153,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   }
-
+//sets up event listeners for saving recipes
   function setUpRecipeEventListeners(recipesData) {
     document.querySelectorAll('.save-recipe').forEach(btn => {
       btn.addEventListener('click', () => {
         const recipeId = btn.dataset.id;
         const recipe = recipesData.find(r => r.id == recipeId);
         if (!profileData.savedRecipes.includes(recipeId)) {
+          //update profile with saved recipes
           profileData.savedRecipes.push(recipeId);
           profileData.savedRecipeDetails.push({
             id: recipeId,
@@ -166,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           localStorage.setItem('profile', JSON.stringify(profileData));
           updateProfileDisplay(profileData);
-          
+          //update community if challenge is active
           if (profileData.communityChallenges.includes('Nutrition Master') && 
               document.getElementById('community').style.display === 'block') {
             updateCommunityDisplay();
@@ -178,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
   // SECTION 5: PRODUCTS SECTION
- 
+ //sets up cart button functionality
   function setupProductCartButtons() {
     document.querySelectorAll(".add-to-cart").forEach(btn => {
       btn.addEventListener("click", addToCart);
@@ -187,19 +190,19 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.addEventListener("click", removeFromCart);
     });
   }
-
+// removes items from the cart
   function removeFromCart(e) {
     e.preventDefault();
     cart = [];
     localStorage.setItem('cart', JSON.stringify(cart));
     updatedCartCount();
-    
+    // visual feedback
     e.target.textContent = "Cart Cleared!";
     setTimeout(() => {
       e.target.textContent = "Clear Cart";
     }, 1000);
   }
-
+//adds items to the cart
   function addToCart(e) {
     e.preventDefault();
     const productId = e.target.dataset.id;
@@ -209,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
       name: productCard.querySelector('h3').textContent,
       price: productCard.querySelector('p').textContent
     };
-    
+    //visual feedback
     e.target.textContent = "Added!";
     setTimeout(() => {
       e.target.textContent = "Add to Cart";
@@ -218,16 +221,17 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem('cart', JSON.stringify(cart));
     updatedCartCount();
   }
-
+//sets up hover effect for the product card
   function setUpProductHoverEffect() {
     if (!elements.products._hoverEventsSet) {
+      //when the mouse is on the product
       elements.products.addEventListener('mouseenter', (e) => {
         const card = e.target.closest('.product-card');
         if (card) {
           card.classList.add('highlight');
         }
       }, true);
-      
+      //when the mouse leaves the product
       elements.products.addEventListener('mouseleave', (e) => {
         const card = e.target.closest('.product-card');
         if (card) {
@@ -245,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
   // SECTION 6: PROFILE SECTION
- 
+ //initialize the profile section with data
   function setUpProfileSection() {
     try {
       profileData = JSON.parse(localStorage.getItem('profile')) || {
@@ -260,6 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateProfileDisplay(profileData);
     } catch (error) {
       console.error("Error loading profile:", error);
+      //intialize empty array when error occurs
       profileData = { 
         completedWorkouts: [],
         savedRecipes: [], 
@@ -271,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     }
   }
-
+//Updates the profile display with the current data
   function updateProfileDisplay(profileData) {
     const profileSection = document.getElementById('profile');
     if (profileSection) {
@@ -332,7 +337,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
  
   // SECTION 7: COMMUNITY SECTION
- 
+ //updates the community section display
   function updateCommunityDisplay() {
     if (!elements.community) {
       console.error("Community section element not found!");
@@ -406,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setupCommunityFeatures();
   }
-
+// Generate HTML for community post
   function generateCommunityPosts() {
     const allPosts = [
       {
@@ -454,8 +459,9 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `).join('');
   }
-
+//gives friends suggestions
   function generateFriendSuggestions() {
+    //friends suggestion data
     const suggestions = [
       { name: "GymBuddy42", mutualFriends: 3 },
       { name: "FitLife", mutualFriends: 5 },
@@ -470,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `).join('');
   }
-
+//sets up all community interactive features
   function setupCommunityFeatures() {
     document.querySelectorAll('.join-challenge').forEach(btn => {
       btn.addEventListener('click', function() {
@@ -484,7 +490,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     });
-    
+    //post creation
     const postButton = document.querySelector('.post-button');
     if (postButton) {
       postButton.addEventListener('click', function() {
@@ -508,7 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     }
-    
+    //friends addition
     document.querySelectorAll('.add-friend').forEach(btn => {
       btn.addEventListener('click', function() {
         const friendName = this.getAttribute('data-user');
@@ -521,7 +527,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     });
-    
+    //post liking
     document.querySelectorAll('.like-btn').forEach(btn => {
       btn.addEventListener('click', function() {
         const currentLikes = parseInt(this.textContent.match(/\d+/)[0]);
@@ -529,13 +535,13 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
-
+//shows temporary message in the community
   function showCommunityMessage(message) {
     const messageElement = document.createElement('div');
     messageElement.className = 'community-message';
     messageElement.textContent = message;
     elements.community.prepend(messageElement);
-    
+    //time set to remove the message
     setTimeout(() => {
       messageElement.remove();
     }, 3000);
@@ -543,18 +549,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
   // SECTION 8: CORE UTILITIES (SHARED FUNCTIONS)
- 
+ //Displays a specific function and hide others
   function showSection(sectionId) {
+    //hides all sections at first
     document.querySelectorAll("main section").forEach((section) => {
       section.style.display = "none";
     });
+    //shows the requested section
     const sectionElement = document.getElementById(sectionId);
     if (sectionElement) {
       sectionElement.style.display = "block";
     }
   }
-
+//fetches data of a specific section from the API
   function fetchSectionData(section) {
+    //shows loading state
     elements[section].innerHTML = `
       <div class="loading">
         <img src="https://c.tenor.com/apFJBGf4LZ0AAAAC/tenor.gif" 
@@ -563,7 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>Loading your ${section} data...</p>
       </div>
     `;
-    
+    //fetch data from the API
     fetch(`${API_BASE_URL}/${section}`)
       .then(response => {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -583,8 +592,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
   }
-
+//Renders content of a specific section
   function renderSectionContent(section, items) {
+    //workout section rendering
     if (section === 'workouts') {
       elements.workouts._workoutData = items;
       elements.workouts.innerHTML = `
@@ -598,11 +608,11 @@ document.addEventListener("DOMContentLoaded", () => {
     
       initializeWorkoutFilters();
       setUpWorkoutEventListener(items);
-    } 
+    } //the nutrition section rendering
     else if (section == 'nutrition') {
       elements.nutrition.innerHTML = items.map(item => createCard(section, item)).join('');
       setUpRecipeEventListeners(items);
-    } 
+    } //default rendering for other sections
     else {
       elements[section].innerHTML = items.length > 0 ?
         items.map(item => createCard(section, item)).join('') :
@@ -613,7 +623,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
-
+//creates an HTML card for an item
   function createCard(section, item) {
     const templates = {
       workouts: () => `
