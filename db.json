@@ -4,50 +4,207 @@
       "id": 1,
       "name": "Beginner Full-Body Workout",
       "category": "Full Body",
+      "difficulty": "Beginner",
       "duration": "20 mins",
-      "description": "Perfect for starters! 3 sets of squats, push-ups, and lunges."
+      "description": "Perfect for starters! 3 sets of squats, push-ups, and lunges.",
+      "exercises": [
+        "Bodyweight Squats: 3 sets of 10 reps",
+        "Push-ups (knees or wall): 3 sets of 8 reps",
+        "Lunges: 3 sets of 8 reps per leg",
+        "Plank: 3 sets of 20 seconds"
+      ]
     },
     {
       "id": 2,
-      "name": "Yoga Flow",
-      "category": "Yoga",
+      "name": "Intermediate Full-Body Burner",
+      "category": "Full Body",
+      "difficulty": "Intermediate",
       "duration": "30 mins",
-      "description": "Relaxing stretches and poses for flexibility."
+      "description": "Challenging full-body routine with compound movements.",
+      "exercises": [
+        "Goblet Squats: 4 sets of 12 reps",
+        "Push-ups: 4 sets of 12 reps",
+        "Dumbbell Rows: 4 sets of 10 reps per arm",
+        "Jumping Lunges: 3 sets of 10 reps per leg",
+        "Plank with Shoulder Taps: 3 sets of 30 seconds"
+      ]
     },
     {
       "id": 3,
-      "name": "Intermediate Full-Body Workout",
+      "name": "Advanced Total Body Circuit",
       "category": "Full Body",
+      "difficulty": "Advanced",
+      "duration": "45 mins",
+      "description": "High-intensity circuit for experienced exercisers.",
+      "exercises": [
+        "Weighted Squats: 5 sets of 10 reps",
+        "Burpees: 4 sets of 15 reps",
+        "Pull-ups: 4 sets to failure",
+        "Dumbbell Thrusters: 4 sets of 12 reps",
+        "Mountain Climbers: 3 sets of 40 seconds"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Beginner Core Fundamentals",
+      "category": "Core",
+      "difficulty": "Beginner",
+      "duration": "15 mins",
+      "description": "Gentle introduction to core strengthening.",
+      "exercises": [
+        "Knee Planks: 3 sets of 20 seconds",
+        "Dead Bugs: 3 sets of 10 reps per side",
+        "Seated Russian Twists: 3 sets of 12 reps",
+        "Glute Bridges: 3 sets of 12 reps"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Yoga Flow for Flexibility",
+      "category": "Yoga",
+      "difficulty": "All Levels",
       "duration": "30 mins",
-      "description": "An advanced full-body routine. 4 sets of squats, push-ups, lunges, and burpees."
+      "description": "Relaxing stretches and poses for flexibility.",
+      "exercises": [
+        "Sun Salutations x5",
+        "Warrior Sequence",
+        "Tree Pose",
+        "Downward Dog Flow",
+        "Seated Forward Fold"
+      ]
     }
   ],
   "nutrition": [
     {
       "id": 1,
-      "name": "Avocado Toast",
-      "calories": 350,
-      "ingredients": ["Bread", "Avocado", "Eggs", "Salt"]
+      "name": "Muscle-Building Breakfast",
+      "category": "High Protein",
+      "calories": 450,
+      "ingredients": [
+        "3 Eggs",
+        "1/2 Avocado",
+        "1 slice Whole Grain Toast",
+        "1 cup Spinach",
+        "1 tbsp Olive Oil"
+      ],
+      "prepTime": "10 mins",
+      "macros": "35g protein | 25g carbs | 22g fat"
     },
     {
       "id": 2,
-      "name": "Protein Smoothie",
-      "calories": 250,
-      "ingredients": ["Banana", "Spinach", "Protein Powder", "Almond Milk"]
+      "name": "Post-Workout Recovery Smoothie",
+      "category": "Recovery",
+      "calories": 320,
+      "ingredients": [
+        "1 Banana",
+        "1 scoop Whey Protein",
+        "1 cup Almond Milk",
+        "1 tbsp Peanut Butter",
+        "1/2 cup Greek Yogurt"
+      ],
+      "prepTime": "5 mins",
+      "macros": "30g protein | 35g carbs | 8g fat"
+    },
+    {
+      "id": 3,
+      "name": "Lean Lunch Bowl",
+      "category": "Balanced",
+      "calories": 400,
+      "ingredients": [
+        "4 oz Grilled Chicken",
+        "1/2 cup Quinoa",
+        "1 cup Mixed Greens",
+        "1/4 cup Chickpeas",
+        "1 tbsp Balsamic Dressing"
+      ],
+      "prepTime": "15 mins",
+      "macros": "35g protein | 40g carbs | 10g fat"
+    },
+    {
+      "id": 4,
+      "name": "Energy-Boosting Snack",
+      "category": "Pre-Workout",
+      "calories": 200,
+      "ingredients": [
+        "1 Apple",
+        "1 tbsp Almond Butter",
+        "1/4 cup Granola",
+        "1 tsp Chia Seeds"
+      ],
+      "prepTime": "2 mins",
+      "macros": "5g protein | 30g carbs | 8g fat"
     }
   ],
   "products": [
     {
       "id": 1,
-      "name": "High-Waist Leggings",
-      "price": 45,
-      "image": "https://www.firmabs.com/cdn/shop/files/01_8651f86c-4ffe-4a85-a874-0fc56b3b405d.jpg?v=1706078288&width=1000"
+      "name": "Compression Training Leggings",
+      "category": "Bottoms",
+      "price": 49.99,
+      "image": "https://www.firmabs.com/cdn/shop/files/01_8651f86c-4ffe-4a85-a874-0fc56b3b405d.jpg?v=1706078288&width=1000",
+      "features": [
+        "Sweat-wicking fabric",
+        "4-way stretch",
+        "Hidden pocket",
+        "High-waist support"
+      ],
+      "colors": ["Black", "Navy", "Burgundy"]
     },
     {
       "id": 2,
-      "name": "Sports Bra",
-      "price": 25,
-      "image": "https://m.media-amazon.com/images/I/710op-PZrkL._AC_SL1500_.jpg"
+      "name": "High-Support Sports Bra",
+      "category": "Tops",
+      "price": 39.99,
+      "image": "https://m.media-amazon.com/images/I/710op-PZrkL._AC_SL1500_.jpg",
+      "features": [
+        "Racerback design",
+        "Breathable mesh panels",
+        "Adjustable straps",
+        "Moisture-wicking"
+      ],
+      "colors": ["White", "Gray", "Pink"]
+    },
+    {
+      "id": 3,
+      "name": "Training Gloves",
+      "category": "Accessories",
+      "price": 24.99,
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRADVhPHABlsA_kX1NiDKpycYc5vL6OwY4ztg&s",
+      "features": [
+        "Padded palms",
+        "Breathable fabric",
+        "Wrist support",
+        "Grip enhancement"
+      ],
+      "colors": ["Black", "Gray"]
+    },
+    {
+      "id": 4,
+      "name": "Hydration Fitness Belt",
+      "category": "Accessories",
+      "price": 29.99,
+      "image": "https://www.robertdyas.co.uk/media/catalog/product/2/4/249688_4_.jpg?quality=80&bg-color=255,255,255&height=1200&width=1200&canvas=1200:1200",
+      "features": [
+        "Holds 2 water bottles",
+        "Zippered pocket",
+        "Adjustable fit",
+        "Lightweight material"
+      ],
+      "colors": ["Black", "Blue"]
+    },
+    {
+      "id": 5,
+      "name": "Premium Yoga Mat",
+      "category": "Equipment",
+      "price": 59.99,
+      "image": "https://cdn.thewirecutter.com/wp-content/media/2024/07/yoga-mat-2048px-1629-3x2-1.jpg?auto=webp&quality=75&crop=16:9,smart&width=1024",
+      "features": [
+        "Non-slip surface",
+        "Eco-friendly materials",
+        "6mm thickness",
+        "Carry strap included"
+      ],
+      "colors": ["Purple", "Teal", "Charcoal"]
     }
   ]
 }
