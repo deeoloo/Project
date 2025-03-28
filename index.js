@@ -107,21 +107,11 @@ document.addEventListener("DOMContentLoaded", () => {
         //update active button
         filterButtons.forEach((b) => b.classList.remove("active"))
         this.classList.add("active")
-        //render filtered wourkout
+        //render filtered workout
         cardsContainer.innerHTML = filtered
-          .map(
-            (item) => `
-          <div class="workout-card">
-            <h3>${item.name}</h3>
-            <p>Category: ${item.category}</p>
-            <p>Duration: ${item.duration}</p>
-            <p>${item.description}</p>
-            <button class="complete-workout" data-id="${item.id}">Mark Complete</button>
-          </div>
-        `,
-          )
+          .map((item) => createCard("workouts", item))
           .join("")
-
+        
         setUpWorkoutEventListener(filtered)
       })
     })
@@ -202,25 +192,43 @@ document.addEventListener("DOMContentLoaded", () => {
   // SECTION 5: PRODUCTS SECTION
   //sets up cart button functionality
   function setupProductCartButtons() {
-    document.querySelectorAll(".add-to-cart").forEach((btn) => {
-      btn.addEventListener("click", addToCart)
-    })
-    document.querySelectorAll(".clear-cart").forEach((btn) => {
-      btn.addEventListener("click", removeFromCart)
-    })
+    // Add to cart buttons
+    document.querySelectorAll(".add-to-cart").forEach(btn => {
+      btn.addEventListener("click", function(e) {
+        addToCart(e);
+        // Update clear button visibility after adding to cart
+        const clearBtn = document.querySelector('.clear-cart');
+        if (clearBtn) {
+          clearBtn.style.display = 'block';
+        }
+      });
+    });
+    
+    // Clear cart button
+    const clearBtn = document.querySelector('.clear-cart');
+    if (clearBtn) {
+      clearBtn.addEventListener("click", removeFromCart);
+    }
   }
+  
   // removes items from the cart
   function removeFromCart(e) {
     e.preventDefault()
     cart = []
     localStorage.setItem("cart", JSON.stringify(cart))
     updatedCartCount()
+    // Hide the clear button after clearing
+    const clearBtn = document.querySelector('.clear-cart');
+    if (clearBtn) {
+      clearBtn.style.display = 'none';
+    }
     // visual feedback
     e.target.textContent = "Cart Cleared!"
     setTimeout(() => {
       e.target.textContent = "Clear Cart"
     }, 1000)
   }
+  
   //adds items to the cart
   function addToCart(e) {
     e.preventDefault()
@@ -240,6 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("cart", JSON.stringify(cart))
     updatedCartCount()
   }
+  
   //sets up hover effect for the product card
   function setUpProductHoverEffect() {
     if (!elements.products._hoverEventsSet) {
@@ -272,6 +281,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updatedCartCount() {
     elements.cartCounter.textContent = cart.length
+    const clearBtn = document.querySelector('.clear-cart');
+    if (clearBtn) {
+      clearBtn.style.display = cart.length > 0 ? 'block' : 'none';
+    }
   }
 
   // SECTION 6: PROFILE SECTION
@@ -659,77 +672,101 @@ document.addEventListener("DOMContentLoaded", () => {
           <button class="filter-btn" data-category="Yoga">Yoga</button>
           <button class="filter-btn active" data-category="all">All</button>
         </div>
-        <div class="workout-cards-container" style="display:none;"></div>
+        <div class="workout-cards-container">
+          ${items.map(item => createCard(section, item)).join('')}
+        </div>
       `
 
       initializeWorkoutFilters()
       setUpWorkoutEventListener(items)
-    } //the nutrition section rendering
+    } 
+    //the nutrition section rendering
     else if (section == "nutrition") {
       elements.nutrition.innerHTML = items
         .map((item) => createCard(section, item))
         .join("")
       setUpRecipeEventListeners(items)
-    } //default rendering for other sections
+    } 
+    //products section rendering
+    else if (section === "products") {
+      elements.products.innerHTML = `
+        <div class="products-container">
+          ${items.length > 0
+            ? items.map(item => createCard(section, item)).join('')
+            : '<p>No products available currently</p>'
+          }
+          <button class="clear-cart" style="display: ${cart.length > 0 ? 'block' : 'none'}">Clear Cart</button>
+        </div>
+      `
+      setUpProductHoverEffect()
+      setupProductCartButtons()
+    }
+    //default rendering for other sections
     else {
       elements[section].innerHTML =
         items.length > 0
           ? items.map((item) => createCard(section, item)).join("")
           : `<p>No ${section} available currently</p>`
-
-      if (section === "products") {
-        setUpProductHoverEffect()
-      }
     }
   }
   //creates an HTML card for an item
   function createCard(section, item) {
     const templates = {
       workouts: () => `
-      <div class="card">
-        <h3>${item.name}</h3>
-        <p><strong>Category:</strong> ${item.category} | <strong>Difficulty:</strong> ${item.difficulty}</p>
-        <p><strong>Duration:</strong> ${item.duration}</p>
-        <p>${item.description}</p>
-        <div class="exercises">
-          <h4>Exercises:</h4>
-          <ul>${item.exercises.map((ex) => `<li>${ex}</li>`).join("")}</ul>
+        <div class="workout-card">
+          <h3>${item.name}</h3>
+          <p><strong>Category:</strong> ${item.category}</p>
+          <p><strong>Difficulty:</strong> ${item.difficulty}</p>
+          <p><strong>Duration:</strong> ${item.duration}</p>
+          <p>${item.description}</p>
+          <div class="exercises">
+            <h4>Exercises:</h4>
+            <ul>
+              ${item.exercises.map(ex => `<li>${ex}</li>`).join('')}
+            </ul>
+          </div>
+          <button class="complete-workout" data-id="${item.id}">Mark Complete</button>
         </div>
-        <button class="complete-workout" data-id="${item.id}">Mark Complete</button>
-      </div>
-    `,
+      `,
 
       nutrition: () => `
-      <div class="card">
-        <h3>${item.name}</h3>
-        <p><strong>Category:</strong> ${item.category}</p>
-        <p><strong>Calories:</strong> ${item.calories}</p>
-        <p><strong>Prep Time:</strong> ${item.prepTime}</p>
-        <p><strong>Macros:</strong> ${item.macros}</p>
-        <div class="ingredients">
-          <h4>Ingredients:</h4>
-          <ul>${item.ingredients.map((i) => `<li>${i}</li>`).join("")}</ul>
-        </div>
-        <button class="save-recipe" data-id="${item.id}">Save Recipe</button>
+  <div class="nutrition-card">
+    <h3>${item.name}</h3>
+    ${item.image ? 
+      `<img src="${item.image}" alt="${item.name}" 
+           onerror="this.onerror=null; this.src='images/fallback.jpg'">` :
+      `<div class="no-image">No image available</div>`
+    }
+    <div class="recipe-details">
+      <p><strong>Category:</strong> ${item.category}</p>
+      <p><strong>Calories:</strong> ${item.calories}</p>
+      <p><strong>Prep Time:</strong> ${item.prepTime}</p>
+      <p><strong>Macros:</strong> ${item.macros}</p>
+      <div class="ingredients">
+        <h4>Ingredients:</h4>
+        <ul>${item.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
       </div>
-    `,
+      <button class="save-recipe" data-id="${item.id}">Save Recipe</button>
+    </div>
+  </div>
+`,
 
       products: () => `
-      <div class="product-card">
-        <img src="${item.image}" 
-        alt="${item.name}"
-        onerror="this.onerror=null; this.src='fallback.jpg'">
-        <h3>${item.name}</h3>
-        <p><strong>Category:</strong> ${item.category}</p>
-        <p><strong>Price:</strong> $${item.price}</p>
-        <div class="features">
-          <h4>Features:</h4>
-          <ul>${item.features.map((f) => `<li>${f}</li>`).join("")}</ul>
+        <div class="product-card">
+          <img src="${item.image}" 
+          alt="${item.name}"
+          onerror="this.onerror=null; this.src='fallback.jpg'">
+          <h3>${item.name}</h3>
+          <p><strong>Category:</strong> ${item.category}</p>
+          <p><strong>Price:</strong> $${item.price}</p>
+          <div class="features">
+            <h4>Features:</h4>
+            <ul>${item.features.map((f) => `<li>${f}</li>`).join("")}</ul>
+          </div>
+          <p><strong>Colors:</strong> ${item.colors.join(", ")}</p>
+          <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
         </div>
-        <p><strong>Colors:</strong> ${item.colors.join(", ")}</p>
-        <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
-      </div>
-    `,
+      `,
     }
     return templates[section] ? templates[section]() : ""
   }

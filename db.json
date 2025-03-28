@@ -77,6 +77,7 @@
   "nutrition": [
     {
       "id": 1,
+      "image": "https://cdn.shopify.com/s/files/1/1283/2557/files/Best_Foods_To_Keep_You_Lean_And_Gain_Muscle_grande.jpg?v=1517876551",
       "name": "Muscle-Building Breakfast",
       "category": "High Protein",
       "calories": 450,
@@ -92,6 +93,7 @@
     },
     {
       "id": 2,
+      "image":"https://assets.sweat.com/shopify_articles/images/000/001/082/original/Tropical_Green_Machine_Smoothie_en3a6a3a83fa2bb5160c0a71468e7a59893a6a3a83fa2bb5160c0a71468e7a5989.jpg?1581640235",
       "name": "Post-Workout Recovery Smoothie",
       "category": "Recovery",
       "calories": 320,
@@ -107,6 +109,7 @@
     },
     {
       "id": 3,
+      "image": "https://www.eatingwell.com/thmb/Z5OeH3EbbtDb7NmNQBCMdAjjFU8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/5238634-81139e2ee375421cad981c46307e9c6b.jpg",
       "name": "Lean Lunch Bowl",
       "category": "Balanced",
       "calories": 400,
@@ -122,6 +125,7 @@
     },
     {
       "id": 4,
+      "image": "https://images.immediate.co.uk/production/volatile/sites/30/2022/04/Cinnamon-berry-granola-bars-4694d38.jpg",
       "name": "Energy-Boosting Snack",
       "category": "Pre-Workout",
       "calories": 200,

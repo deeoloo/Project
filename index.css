@@ -26,22 +26,102 @@ nav button.active { background: var(--primary-color); }
 /* Main Content */
 main { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
 main section { display: none; }
-main section.active { display: block; }
+main section.active { display: flex; flex-direction: column; align-items: center; }
 
-/* Cards & Grid */
-.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
-.card, .product-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); }
-img:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+/* Cards & Grid Layout - Centered */
+.card-grid { 
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  width: 100%;
+}
 
-/* Updated: Removed colored background from card headings */
-.card h3 { padding: 1rem; margin: 0; border-bottom: 1px solid #eee; } /* Removed background-color */
+/* Base Card Styles */
+.card, .product-card, .workout-card { 
+  background: white; 
+  border-radius: 8px; 
+  overflow: hidden; 
+  box-shadow: var(--shadow); 
+  transition: var(--transition);
+  width: 300px;
+}
 
-.card-content { padding: 1.5rem; }
+/* Nutrition Guide Card */
+.card {
+  border: 1px solid rgba(255, 111, 97, 0.2);
+  border-top: 3px solid var(--primary-color);
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(255, 111, 97, 0.15);
+  border-color: rgba(255, 111, 97, 0.4);
+}
+
+/* For all nutrition card images */
+.nutrition-card img {
+  width: 100%;       /* Make image fill container width */
+  height: 200px;     /* Fixed height */
+  object-fit: cover;  /* Crop to maintain aspect ratio */
+  border-radius: 8px; /* Optional: rounded corners */
+  display: block;    /* Remove extra space below image */
+}
+
+/* For the no-image placeholder */
+.nutrition-card .no-image {
+  width: 100%;
+  height: 200px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: #666;
+}
+
+
+/* Workout Card */
+.workout-card {
+  border: 1px solid rgba(205, 139, 78, 0.2);
+  border-top: 3px solid var(--secondary-color);
+}
+.workout-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(205, 139, 78, 0.2);
+  border-color: rgba(205, 139, 78, 0.4);
+}
+
+/* Product Card */
+.product-card {
+  border: 1px solid rgba(45, 52, 54, 0.1);
+  border-top: 3px solid var(--dark-color);
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(45, 52, 54, 0.1);
+  border-color: rgba(45, 52, 54, 0.3);
+}
+
+/* Card Content */
+.card h3, .product-card h3, .workout-card h3 { 
+  padding: 1rem; 
+  margin: 0; 
+  text-align: center;
+  background-color: rgba(249, 249, 249, 0.5);
+  border-bottom: 1px solid #eee; 
+}
+
+.card-content { 
+  padding: 1.5rem; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .card p { margin-bottom: 0.5rem; color: var(--text-light); }
 
 /* Product Cards */
-/*.product-card.highlight { transform: scale(1.03); box-shadow: 0 8px 15px rgba(0,0,0,0.15); border: 2px solid var(--accent-color); }*/
-.product-card img { width: 20%; height: 100px; object-fit: cover; border-bottom: 1px solid #eee; }
+.product-card img { width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid #eee; }
 .product-info { padding: 1rem; }
 .product-info h3 { margin-bottom: 0.5rem; }
 .product-info p { font-weight: bold; color: var(--primary-color); font-size: 1.2rem; margin-bottom: 1rem; }
@@ -50,6 +130,7 @@ img:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1)
 .complete-workout, .save-recipe, .add-to-cart, .clear-cart, .join-challenge, .post-button, .search-button, .filter-btn, .filter-btn-active{
   background: var(--primary-darker); color: white; border: none; padding: 0.7rem 1.2rem;
   border-radius: 4px; font-weight: bold; cursor: pointer; transition: var(--transition);
+  margin: 0.5rem auto;
 }
 .complete-workout:hover, .save-recipe:hover, .add-to-cart:hover, .clear-cart.join-challenge:hover, .post-button:hover, .filter-btn:hover, .filter-btn-active { background: var(--primary-darkest); }
 .add-to-cart.added { animation: bounce 0.5s; background: var(--secondary-color); }
@@ -113,9 +194,68 @@ footer { background: var(--dark-color); color: white; text-align: center; paddin
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
+/* Section-Specific Centering Styles */
+#workout-lists,
+#product-list,
+#recipe-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.workout-cards-container,
+.products-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 1rem;
+}
+
+.exercises {
+  text-align: left;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.exercises h4 {
+  text-align: center;
+}
+
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
-  .card-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+  .card, .product-card, .workout-card {
+    width: 100%;
+    max-width: 350px;
+  }
+  
   nav ul { gap: 0.5rem; }
   .stats { flex-direction: column; }
+  
+  .workout-cards-container,
+  .products-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  @media (max-width: 768px) {
+  #recipe-list .card-grid {
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+  
+  #recipe-list .nutrition-card {
+    width: 260px; /* Slightly narrower on mobile */
+  }
+}
 }
