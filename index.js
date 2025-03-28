@@ -624,37 +624,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 //creates an HTML card for an item
-  function createCard(section, item) {
-    const templates = {
-      workouts: () => `
-        <div class="card">
-          <h3>${item.name}</h3>
-          <p>Category: ${item.category}</p>
-          <p>Duration: ${item.duration}</p>
-          <p>${item.description}</p>
-          <button class="complete-workout" data-id="${item.id}">Mark Complete</button>
+function createCard(section, item) {
+  const templates = {
+    workouts: () => `
+      <div class="card">
+        <h3>${item.name}</h3>
+        <p><strong>Category:</strong> ${item.category} | <strong>Difficulty:</strong> ${item.difficulty}</p>
+        <p><strong>Duration:</strong> ${item.duration}</p>
+        <p>${item.description}</p>
+        <div class="exercises">
+          <h4>Exercises:</h4>
+          <ul>${item.exercises.map(ex => `<li>${ex}</li>`).join('')}</ul>
         </div>
-      `,
-      nutrition: () => `
-        <div class="card">
-          <h3>${item.name}</h3>
-          <p>Calories: ${item.calories}</p>
-          <ul>${item.ingredients.map(i => `<li>${i}</li>`).join("")}</ul>
-          <button class="save-recipe" data-id="${item.id}">Save Recipe</button>
+        <button class="complete-workout" data-id="${item.id}">Mark Complete</button>
+      </div>
+    `,
+    
+    nutrition: () => `
+      <div class="card">
+        <h3>${item.name}</h3>
+        <p><strong>Category:</strong> ${item.category}</p>
+        <p><strong>Calories:</strong> ${item.calories}</p>
+        <p><strong>Prep Time:</strong> ${item.prepTime}</p>
+        <p><strong>Macros:</strong> ${item.macros}</p>
+        <div class="ingredients">
+          <h4>Ingredients:</h4>
+          <ul>${item.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
         </div>
-      `,
-      products: () => `
-        <div class="product-card">
-          <img src="${item.image}" 
-          alt="${item.name}"
-          onerror="this.onerror=null; this.src='fallback.jpg'">
-          <h3>${item.name}</h3>
-          <p>$${item.price}</p>
-          <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
-          <button class="clear-cart" data-id="${item.id}">Clear Cart</button>
+        <button class="save-recipe" data-id="${item.id}">Save Recipe</button>
+      </div>
+    `,
+    
+    products: () => `
+      <div class="product-card">
+        <img src="${item.image}" 
+        alt="${item.name}"
+        onerror="this.onerror=null; this.src='fallback.jpg'">
+        <h3>${item.name}</h3>
+        <p><strong>Category:</strong> ${item.category}</p>
+        <p><strong>Price:</strong> $${item.price}</p>
+        <div class="features">
+          <h4>Features:</h4>
+          <ul>${item.features.map(f => `<li>${f}</li>`).join('')}</ul>
         </div>
-      `,
-    };
-    return templates[section] ? templates[section]() : '';
-  }
+        <p><strong>Colors:</strong> ${item.colors.join(', ')}</p>
+        <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
+      </div>
+    `
+  };
+  return templates[section] ? templates[section]() : '';
+};
 });
