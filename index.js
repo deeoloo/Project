@@ -1,104 +1,116 @@
 document.addEventListener("DOMContentLoaded", () => {
-  
   // SECTION 1: DOM ELEMENTS & INITIALIZATION
- 
+
   const elements = {
-    workouts: document.getElementById("workout-lists"), 
+    workouts: document.getElementById("workout-lists"),
     nutrition: document.getElementById("recipe-list"),
     products: document.getElementById("product-list"),
     recipeSearch: document.getElementById("recipe-research"),
     cartCounter: document.getElementById("cart-counter"),
     profile: document.getElementById("user-progress"),
-    community: document.getElementById("community-section")
-  };
+    community: document.getElementById("community-section"),
+  }
 
   // Validation
   if (!elements.workouts || !elements.nutrition || !elements.products) {
-    console.error("Missing critical DOM elements!");
+    console.error("Missing critical DOM elements!")
   }
   //the app constants and variables
-  const navButtons = document.querySelectorAll("nav button");
-  const API_BASE_URL = "https://json-mock-api-vk2o.onrender.com/api";
-  const validSections = ['workouts', 'nutrition', 'products', 'profile', 'community'];
+  const navButtons = document.querySelectorAll("nav button")
+  const API_BASE_URL = "https://json-mock-api-vk2o.onrender.com/api"
+  const validSections = [
+    "workouts",
+    "nutrition",
+    "products",
+    "profile",
+    "community",
+  ]
 
   // Initialize data structures
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-  let profileData = JSON.parse(localStorage.getItem('profile')) || {
+  let cart = JSON.parse(localStorage.getItem("cart")) || []
+  let profileData = JSON.parse(localStorage.getItem("profile")) || {
     completedWorkouts: [],
     savedRecipes: [],
     savedRecipeDetails: [],
     completedWorkoutDetails: [],
     communityChallenges: [],
     friends: [],
-    posts: []
-  };
+    posts: [],
+  }
 
   // Initial setup
-  updatedCartCount();
-  setUpProfileSection();
-  showSection("workouts");
-  fetchSectionData("workouts");
+  updatedCartCount()
+  setUpProfileSection()
+  showSection("workouts")
+  fetchSectionData("workouts")
 
-  
   // SECTION 2: NAVIGATION HANDLING
-  
-  navButtons.forEach(button => {
-    button.addEventListener("click", (e) => {
-      e.preventDefault();
-      const buttonId = button.id.replace("nav-", "");
-      const sectionId = buttonId === 'user-progress' ? 'profile' : 
-                       buttonId === 'community' ? 'community' : buttonId;
-      
-      if (validSections.includes(sectionId)) {
-        showSection(sectionId);
 
-        if (sectionId === 'community') {
+  navButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      e.preventDefault()
+      const buttonId = button.id.replace("nav-", "")
+      const sectionId =
+        buttonId === "user-progress"
+          ? "profile"
+          : buttonId === "community"
+            ? "community"
+            : buttonId
+
+      if (validSections.includes(sectionId)) {
+        showSection(sectionId)
+
+        if (sectionId === "community") {
           if (!elements.community) {
-            console.error("Community section element missing!");
-            return;
+            console.error("Community section element missing!")
+            return
           }
-          updateCommunityDisplay();
-        } 
-        else if (sectionId !== 'profile') {
-          fetchSectionData(sectionId);
+          updateCommunityDisplay()
+        } else if (sectionId !== "profile") {
+          fetchSectionData(sectionId)
         } else {
-          updateProfileDisplay(profileData);
+          updateProfileDisplay(profileData)
         }
       }
-    });
-  });
+    })
+  })
 
-  
   // SECTION 3: WORKOUTS SECTION
   //sets up a workout filter functionality
   function initializeWorkoutFilters() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const cardsContainer = elements.workouts.querySelector('.workout-cards-container');
-    
-    filterButtons.forEach(btn => {
-      btn.addEventListener("click", function() {
-        const wasActive = this.classList.contains("active");
-        const allWorkouts = elements.workouts._workoutData || [];
-        const category = this.dataset.category;
+    const filterButtons = document.querySelectorAll(".filter-btn")
+    const cardsContainer = elements.workouts.querySelector(
+      ".workout-cards-container",
+    )
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const wasActive = this.classList.contains("active")
+        const allWorkouts = elements.workouts._workoutData || []
+        const category = this.dataset.category
         //toggles visibility if clicking active filter
         if (wasActive) {
-          cardsContainer.style.display = cardsContainer.style.display === 'none' ? 'block' : 'none';
-          return;
+          cardsContainer.style.display =
+            cardsContainer.style.display === "none" ? "block" : "none"
+          return
         }
-        
-        if (cardsContainer.style.display === 'none') {
-          cardsContainer.style.display = 'block';
+
+        if (cardsContainer.style.display === "none") {
+          cardsContainer.style.display = "block"
         }
         //filters workout by category
-        const filtered = category === 'all' 
-          ? allWorkouts 
-          : allWorkouts.filter(w => w.category === category);
-         
-         //update active button
-        filterButtons.forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
+        const filtered =
+          category === "all"
+            ? allWorkouts
+            : allWorkouts.filter((w) => w.category === category)
+
+        //update active button
+        filterButtons.forEach((b) => b.classList.remove("active"))
+        this.classList.add("active")
         //render filtered wourkout
-        cardsContainer.innerHTML = filtered.map(item => `
+        cardsContainer.innerHTML = filtered
+          .map(
+            (item) => `
           <div class="workout-card">
             <h3>${item.name}</h3>
             <p>Category: ${item.category}</p>
@@ -106,179 +118,193 @@ document.addEventListener("DOMContentLoaded", () => {
             <p>${item.description}</p>
             <button class="complete-workout" data-id="${item.id}">Mark Complete</button>
           </div>
-        `).join('');
-        
-        setUpWorkoutEventListener(filtered);
-      });
-    });
+        `,
+          )
+          .join("")
+
+        setUpWorkoutEventListener(filtered)
+      })
+    })
   }
-//sets up an eventlistener for workout completion
+  //sets up an eventlistener for workout completion
   function setUpWorkoutEventListener(workoutsData) {
-    document.querySelectorAll('.complete-workout').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const workoutId = btn.dataset.id;
-        const workout = workoutsData.find(w => w.id == workoutId);
+    document.querySelectorAll(".complete-workout").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const workoutId = btn.dataset.id
+        const workout = workoutsData.find((w) => w.id == workoutId)
         if (!profileData.completedWorkouts.includes(workoutId)) {
           //update profile with completed workout
-          profileData.completedWorkouts.push(workoutId);
+          profileData.completedWorkouts.push(workoutId)
           profileData.completedWorkoutDetails.push({
             id: workoutId,
             name: workout.name,
-            date: new Date().toLocaleDateString()
-          });
-          localStorage.setItem('profile', JSON.stringify(profileData));
-          updateProfileDisplay(profileData);
-          //update the community if challenge is active 
-          if (profileData.communityChallenges.includes('30-Day Fitness Journey') && 
-              document.getElementById('community').style.display === 'block') {
-            updateCommunityDisplay();
+            date: new Date().toLocaleDateString(),
+          })
+          localStorage.setItem("profile", JSON.stringify(profileData))
+          updateProfileDisplay(profileData)
+          //update the community if challenge is active
+          if (
+            profileData.communityChallenges.includes(
+              "30-Day Fitness Journey",
+            ) &&
+            document.getElementById("community").style.display === "block"
+          ) {
+            updateCommunityDisplay()
           }
         }
-      });
-    });
+      })
+    })
   }
-
 
   // SECTION 4: NUTRITION SECTION
   //sets up the recipe search functionality
   function setupNutritionSearch(data) {
     if (elements.recipeSearch) {
       elements.recipeSearch.addEventListener("input", (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = data.filter(item => 
-          item.name.toLowerCase().includes(term) || 
-          item.ingredients.some(i => i.toLowerCase().includes(term))
-        );
-        renderSectionContent('nutrition', filtered);
-      });
+        const term = e.target.value.toLowerCase()
+        const filtered = data.filter(
+          (item) =>
+            item.name.toLowerCase().includes(term) ||
+            item.ingredients.some((i) => i.toLowerCase().includes(term)),
+        )
+        renderSectionContent("nutrition", filtered)
+      })
     }
   }
-//sets up event listeners for saving recipes
+  //sets up event listeners for saving recipes
   function setUpRecipeEventListeners(recipesData) {
-    document.querySelectorAll('.save-recipe').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const recipeId = btn.dataset.id;
-        const recipe = recipesData.find(r => r.id == recipeId);
+    document.querySelectorAll(".save-recipe").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const recipeId = btn.dataset.id
+        const recipe = recipesData.find((r) => r.id == recipeId)
         if (!profileData.savedRecipes.includes(recipeId)) {
           //update profile with saved recipes
-          profileData.savedRecipes.push(recipeId);
+          profileData.savedRecipes.push(recipeId)
           profileData.savedRecipeDetails.push({
             id: recipeId,
             name: recipe.name,
-            saveOn: new Date().toLocaleDateString()
-          });
-          localStorage.setItem('profile', JSON.stringify(profileData));
-          updateProfileDisplay(profileData);
+            saveOn: new Date().toLocaleDateString(),
+          })
+          localStorage.setItem("profile", JSON.stringify(profileData))
+          updateProfileDisplay(profileData)
           //update community if challenge is active
-          if (profileData.communityChallenges.includes('Nutrition Master') && 
-              document.getElementById('community').style.display === 'block') {
-            updateCommunityDisplay();
+          if (
+            profileData.communityChallenges.includes("Nutrition Master") &&
+            document.getElementById("community").style.display === "block"
+          ) {
+            updateCommunityDisplay()
           }
         }
-      });
-    });
+      })
+    })
   }
 
-  
   // SECTION 5: PRODUCTS SECTION
- //sets up cart button functionality
+  //sets up cart button functionality
   function setupProductCartButtons() {
-    document.querySelectorAll(".add-to-cart").forEach(btn => {
-      btn.addEventListener("click", addToCart);
-    });
-    document.querySelectorAll(".clear-cart").forEach(btn => {
-      btn.addEventListener("click", removeFromCart);
-    });
+    document.querySelectorAll(".add-to-cart").forEach((btn) => {
+      btn.addEventListener("click", addToCart)
+    })
+    document.querySelectorAll(".clear-cart").forEach((btn) => {
+      btn.addEventListener("click", removeFromCart)
+    })
   }
-// removes items from the cart
+  // removes items from the cart
   function removeFromCart(e) {
-    e.preventDefault();
-    cart = [];
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updatedCartCount();
+    e.preventDefault()
+    cart = []
+    localStorage.setItem("cart", JSON.stringify(cart))
+    updatedCartCount()
     // visual feedback
-    e.target.textContent = "Cart Cleared!";
+    e.target.textContent = "Cart Cleared!"
     setTimeout(() => {
-      e.target.textContent = "Clear Cart";
-    }, 1000);
+      e.target.textContent = "Clear Cart"
+    }, 1000)
   }
-//adds items to the cart
+  //adds items to the cart
   function addToCart(e) {
-    e.preventDefault();
-    const productId = e.target.dataset.id;
-    const productCard = e.target.closest('.product-card');
+    e.preventDefault()
+    const productId = e.target.dataset.id
+    const productCard = e.target.closest(".product-card")
     const productData = {
       id: productId,
-      name: productCard.querySelector('h3').textContent,
-      price: productCard.querySelector('p').textContent
-    };
+      name: productCard.querySelector("h3").textContent,
+      price: productCard.querySelector("p").textContent,
+    }
     //visual feedback
-    e.target.textContent = "Added!";
+    e.target.textContent = "Added!"
     setTimeout(() => {
-      e.target.textContent = "Add to Cart";
-    }, 1000);
-    cart.push(productData);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updatedCartCount();
+      e.target.textContent = "Add to Cart"
+    }, 1000)
+    cart.push(productData)
+    localStorage.setItem("cart", JSON.stringify(cart))
+    updatedCartCount()
   }
-//sets up hover effect for the product card
+  //sets up hover effect for the product card
   function setUpProductHoverEffect() {
     if (!elements.products._hoverEventsSet) {
       //when the mouse is on the product
-      elements.products.addEventListener('mouseenter', (e) => {
-        const card = e.target.closest('.product-card');
-        if (card) {
-          card.classList.add('highlight');
-        }
-      }, true);
+      elements.products.addEventListener(
+        "mouseenter",
+        (e) => {
+          const card = e.target.closest(".product-card")
+          if (card) {
+            card.classList.add("highlight")
+          }
+        },
+        true,
+      )
       //when the mouse leaves the product
-      elements.products.addEventListener('mouseleave', (e) => {
-        const card = e.target.closest('.product-card');
-        if (card) {
-          card.classList.remove('highlight');
-        }
-      }, true);
-      
-      elements.products._hoverEventsSet = true;
+      elements.products.addEventListener(
+        "mouseleave",
+        (e) => {
+          const card = e.target.closest(".product-card")
+          if (card) {
+            card.classList.remove("highlight")
+          }
+        },
+        true,
+      )
+
+      elements.products._hoverEventsSet = true
     }
   }
 
   function updatedCartCount() {
-    elements.cartCounter.textContent = cart.length;
+    elements.cartCounter.textContent = cart.length
   }
 
-  
   // SECTION 6: PROFILE SECTION
- //initialize the profile section with data
+  //initialize the profile section with data
   function setUpProfileSection() {
     try {
-      profileData = JSON.parse(localStorage.getItem('profile')) || {
+      profileData = JSON.parse(localStorage.getItem("profile")) || {
         completedWorkouts: [],
         savedRecipes: [],
         savedRecipeDetails: [],
         completedWorkoutDetails: [],
         communityChallenges: [],
         friends: [],
-        posts: []
-      };
-      updateProfileDisplay(profileData);
+        posts: [],
+      }
+      updateProfileDisplay(profileData)
     } catch (error) {
-      console.error("Error loading profile:", error);
+      console.error("Error loading profile:", error)
       //intialize empty array when error occurs
-      profileData = { 
+      profileData = {
         completedWorkouts: [],
-        savedRecipes: [], 
-        savedRecipeDetails: [], 
+        savedRecipes: [],
+        savedRecipeDetails: [],
         completedWorkoutDetails: [],
         communityChallenges: [],
         friends: [],
-        posts: []
-      };
+        posts: [],
+      }
     }
   }
-//Updates the profile display with the current data
+  //Updates the profile display with the current data
   function updateProfileDisplay(profileData) {
-    const profileSection = document.getElementById('profile');
+    const profileSection = document.getElementById("profile")
     if (profileSection) {
       profileSection.innerHTML = `
         <div class="profile-card">
@@ -305,43 +331,62 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="recent-activity">
             <h4>Recent Activity</h4>
             <ul>
-              ${profileData.completedWorkoutDetails.slice(-3).map(workout => `
+              ${profileData.completedWorkoutDetails
+                .slice(-3)
+                .map(
+                  (workout) => `
                 <li>
                   <span class="activity-icon">🏋️</span>
                   Completed ${workout.name}
                 </li>
-              `).join('')}
-              ${profileData.savedRecipeDetails.slice(-3).map(recipe => `
+              `,
+                )
+                .join("")}
+              ${profileData.savedRecipeDetails
+                .slice(-3)
+                .map(
+                  (recipe) => `
                 <li>
                   <span class="activity-icon">🍲</span>
                   Saved ${recipe.name}
                 </li>
-              `).join('')}
-              ${profileData.communityChallenges.slice(-1).map(challenge => `
+              `,
+                )
+                .join("")}
+              ${profileData.communityChallenges
+                .slice(-1)
+                .map(
+                  (challenge) => `
                 <li>
                   <span class="activity-icon">🏆</span>
                   Joined ${challenge}
                 </li>
-              `).join('')}
-              ${profileData.posts.slice(-1).map(post => `
+              `,
+                )
+                .join("")}
+              ${profileData.posts
+                .slice(-1)
+                .map(
+                  (post) => `
                 <li>
                   <span class="activity-icon">💬</span>
                   Posted: "${post.content.substring(0, 20)}..."
                 </li>
-              `).join('')}
+              `,
+                )
+                .join("")}
             </ul>
         </div>
-      `;
+      `
     }
   }
 
- 
   // SECTION 7: COMMUNITY SECTION
- //updates the community section display
+  //updates the community section display
   function updateCommunityDisplay() {
     if (!elements.community) {
-      console.error("Community section element not found!");
-      return;
+      console.error("Community section element not found!")
+      return
     }
 
     elements.community.innerHTML = `
@@ -359,12 +404,12 @@ document.addEventListener("DOMContentLoaded", () => {
               <p>Complete workouts for 30 days straight</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.min(100, (profileData.completedWorkouts.length / 30 * 100))}%"></div>
+                  <div class="progress-fill" style="width: ${Math.min(100, (profileData.completedWorkouts.length / 30) * 100)}%"></div>
                 </div>
                 <span class="progress-text">${profileData.completedWorkouts.length}/30 days</span>
               </div>
               <button class="join-challenge" data-challenge="30-Day Fitness Journey">
-                ${profileData.communityChallenges.includes('30-Day Fitness Journey') ? 'Joined ✓' : 'Join Challenge'}
+                ${profileData.communityChallenges.includes("30-Day Fitness Journey") ? "Joined ✓" : "Join Challenge"}
               </button>
             </div>
             
@@ -373,12 +418,12 @@ document.addEventListener("DOMContentLoaded", () => {
               <p>Try 10 healthy recipes this month</p>
               <div class="progress-container">
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${Math.min(100, (profileData.savedRecipes.length / 10 * 100))}%"></div>
+                  <div class="progress-fill" style="width: ${Math.min(100, (profileData.savedRecipes.length / 10) * 100)}%"></div>
                 </div>
                 <span class="progress-text">${profileData.savedRecipes.length}/10 recipes</span>
               </div>
               <button class="join-challenge" data-challenge="Nutrition Master">
-                ${profileData.communityChallenges.includes('Nutrition Master') ? 'Joined ✓' : 'Join Challenge'}
+                ${profileData.communityChallenges.includes("Nutrition Master") ? "Joined ✓" : "Join Challenge"}
               </button>
             </div>
           </div>
@@ -407,11 +452,11 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         </div>
       </div>
-    `;
+    `
 
-    setupCommunityFeatures();
+    setupCommunityFeatures()
   }
-// Generate HTML for community post
+  // Generate HTML for community post
   function generateCommunityPosts() {
     const allPosts = [
       {
@@ -420,28 +465,32 @@ document.addEventListener("DOMContentLoaded", () => {
         content: "Just completed the 30-day challenge! Feeling amazing!",
         likes: 24,
         comments: 5,
-        time: "2 hours ago"
+        time: "2 hours ago",
       },
       ...profileData.posts,
       {
         user: "HealthyEater",
         avatar: "🍏",
-        content: "Tried the protein smoothie recipe from the nutrition section - delicious!",
+        content:
+          "Tried the protein smoothie recipe from the nutrition section - delicious!",
         likes: 18,
         comments: 3,
-        time: "5 hours ago"
+        time: "5 hours ago",
       },
       {
         user: "YogaMaster",
         avatar: "🧘",
-        content: "Morning yoga session with the sunrise. Perfect start to the day!",
+        content:
+          "Morning yoga session with the sunrise. Perfect start to the day!",
         likes: 32,
         comments: 7,
-        time: "1 day ago"
-      }
-    ];
-    
-    return allPosts.map(post => `
+        time: "1 day ago",
+      },
+    ]
+
+    return allPosts
+      .map(
+        (post) => `
       <div class="community-post">
         <div class="post-header">
           <span class="user-avatar">${post.avatar}</span>
@@ -457,44 +506,50 @@ document.addEventListener("DOMContentLoaded", () => {
           <button class="share-btn">↗️ Share</button>
         </div>
       </div>
-    `).join('');
+    `,
+      )
+      .join("")
   }
-//gives friends suggestions
+  //gives friends suggestions
   function generateFriendSuggestions() {
     //friends suggestion data
     const suggestions = [
       { name: "GymBuddy42", mutualFriends: 3 },
       { name: "FitLife", mutualFriends: 5 },
-      { name: "WellnessWarrior", mutualFriends: 2 }
-    ].filter(friend => !profileData.friends.includes(friend.name));
-    
-    return suggestions.map(friend => `
+      { name: "WellnessWarrior", mutualFriends: 2 },
+    ].filter((friend) => !profileData.friends.includes(friend.name))
+
+    return suggestions
+      .map(
+        (friend) => `
       <div class="friend-suggestion">
         <span class="friend-name">${friend.name}</span>
         <span class="mutual-friends">${friend.mutualFriends} mutual friends</span>
         <button class="add-friend" data-user="${friend.name}">Add Friend</button>
       </div>
-    `).join('');
+    `,
+      )
+      .join("")
   }
-//sets up all community interactive features
+  //sets up all community interactive features
   function setupCommunityFeatures() {
-    document.querySelectorAll('.join-challenge').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const challenge = this.getAttribute('data-challenge');
+    document.querySelectorAll(".join-challenge").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const challenge = this.getAttribute("data-challenge")
         if (!profileData.communityChallenges.includes(challenge)) {
-          profileData.communityChallenges.push(challenge);
-          localStorage.setItem('profile', JSON.stringify(profileData));
-          this.textContent = 'Joined ✓';
-          showCommunityMessage(`You've joined the ${challenge}!`);
-          updateProfileDisplay(profileData);
+          profileData.communityChallenges.push(challenge)
+          localStorage.setItem("profile", JSON.stringify(profileData))
+          this.textContent = "Joined ✓"
+          showCommunityMessage(`You've joined the ${challenge}!`)
+          updateProfileDisplay(profileData)
         }
-      });
-    });
+      })
+    })
     //post creation
-    const postButton = document.querySelector('.post-button');
+    const postButton = document.querySelector(".post-button")
     if (postButton) {
-      postButton.addEventListener('click', function() {
-        const textarea = document.querySelector('.create-post textarea');
+      postButton.addEventListener("click", function () {
+        const textarea = document.querySelector(".create-post textarea")
         if (textarea && textarea.value.trim()) {
           const newPost = {
             user: "You",
@@ -502,66 +557,65 @@ document.addEventListener("DOMContentLoaded", () => {
             content: textarea.value.trim(),
             likes: 0,
             comments: 0,
-            time: "Just now"
-          };
-          
-          profileData.posts.unshift(newPost);
-          localStorage.setItem('profile', JSON.stringify(profileData));
-          
-          showCommunityMessage('Your post has been shared with the community!');
-          textarea.value = '';
-          updateCommunityDisplay();
+            time: "Just now",
+          }
+
+          profileData.posts.unshift(newPost)
+          localStorage.setItem("profile", JSON.stringify(profileData))
+
+          showCommunityMessage("Your post has been shared with the community!")
+          textarea.value = ""
+          updateCommunityDisplay()
         }
-      });
+      })
     }
     //friends addition
-    document.querySelectorAll('.add-friend').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const friendName = this.getAttribute('data-user');
+    document.querySelectorAll(".add-friend").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const friendName = this.getAttribute("data-user")
         if (!profileData.friends.includes(friendName)) {
-          profileData.friends.push(friendName);
-          localStorage.setItem('profile', JSON.stringify(profileData));
-          this.textContent = 'Request Sent';
-          this.disabled = true;
-          showCommunityMessage(`Friend request sent to ${friendName}`);
+          profileData.friends.push(friendName)
+          localStorage.setItem("profile", JSON.stringify(profileData))
+          this.textContent = "Request Sent"
+          this.disabled = true
+          showCommunityMessage(`Friend request sent to ${friendName}`)
         }
-      });
-    });
+      })
+    })
     //post liking
-    document.querySelectorAll('.like-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const currentLikes = parseInt(this.textContent.match(/\d+/)[0]);
-        this.textContent = `👍 ${currentLikes + 1}`;
-      });
-    });
+    document.querySelectorAll(".like-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const currentLikes = parseInt(this.textContent.match(/\d+/)[0])
+        this.textContent = `👍 ${currentLikes + 1}`
+      })
+    })
   }
-//shows temporary message in the community
+  //shows temporary message in the community
   function showCommunityMessage(message) {
-    const messageElement = document.createElement('div');
-    messageElement.className = 'community-message';
-    messageElement.textContent = message;
-    elements.community.prepend(messageElement);
+    const messageElement = document.createElement("div")
+    messageElement.className = "community-message"
+    messageElement.textContent = message
+    elements.community.prepend(messageElement)
     //time set to remove the message
     setTimeout(() => {
-      messageElement.remove();
-    }, 3000);
+      messageElement.remove()
+    }, 3000)
   }
 
-  
   // SECTION 8: CORE UTILITIES (SHARED FUNCTIONS)
- //Displays a specific function and hide others
+  //Displays a specific function and hide others
   function showSection(sectionId) {
     //hides all sections at first
     document.querySelectorAll("main section").forEach((section) => {
-      section.style.display = "none";
-    });
+      section.style.display = "none"
+    })
     //shows the requested section
-    const sectionElement = document.getElementById(sectionId);
+    const sectionElement = document.getElementById(sectionId)
     if (sectionElement) {
-      sectionElement.style.display = "block";
+      sectionElement.style.display = "block"
     }
   }
-//fetches data of a specific section from the API
+  //fetches data of a specific section from the API
   function fetchSectionData(section) {
     //shows loading state
     elements[section].innerHTML = `
@@ -571,32 +625,34 @@ document.addEventListener("DOMContentLoaded", () => {
              style="width: 100px; height: 100px;">
         <p>Loading your ${section} data...</p>
       </div>
-    `;
+    `
     //fetch data from the API
     fetch(`${API_BASE_URL}/${section}`)
-      .then(response => {
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
+      .then((response) => {
+        if (!response.ok)
+          throw new Error(`HTTP error! status: ${response.status}`)
+        return response.json()
       })
-      .then(data => {
+      .then((data) => {
         if (elements[section] && data) {
-          renderSectionContent(section, data);
-          if (section === 'nutrition') setupNutritionSearch(data);
-          if (section === 'products') setupProductCartButtons();
+          renderSectionContent(section, data)
+          if (section === "nutrition") setupNutritionSearch(data)
+          if (section === "products") setupProductCartButtons()
         }
       })
-      .catch(error => {
-        console.error(`Failed loading ${section}:`, error);
+      .catch((error) => {
+        console.error(`Failed loading ${section}:`, error)
         if (elements[section]) {
-          elements[section].innerHTML = `<p>Error loading data. Please try again later.</p>`;
+          elements[section].innerHTML =
+            `<p>Error loading data. Please try again later.</p>`
         }
-      });
+      })
   }
-//Renders content of a specific section
+  //Renders content of a specific section
   function renderSectionContent(section, items) {
     //workout section rendering
-    if (section === 'workouts') {
-      elements.workouts._workoutData = items;
+    if (section === "workouts") {
+      elements.workouts._workoutData = items
       elements.workouts.innerHTML = `
         <div class="filters">
           <button class="filter-btn" data-category="Full Body">Full Body</button>
@@ -604,29 +660,32 @@ document.addEventListener("DOMContentLoaded", () => {
           <button class="filter-btn active" data-category="all">All</button>
         </div>
         <div class="workout-cards-container" style="display:none;"></div>
-      `;
-    
-      initializeWorkoutFilters();
-      setUpWorkoutEventListener(items);
+      `
+
+      initializeWorkoutFilters()
+      setUpWorkoutEventListener(items)
     } //the nutrition section rendering
-    else if (section == 'nutrition') {
-      elements.nutrition.innerHTML = items.map(item => createCard(section, item)).join('');
-      setUpRecipeEventListeners(items);
+    else if (section == "nutrition") {
+      elements.nutrition.innerHTML = items
+        .map((item) => createCard(section, item))
+        .join("")
+      setUpRecipeEventListeners(items)
     } //default rendering for other sections
     else {
-      elements[section].innerHTML = items.length > 0 ?
-        items.map(item => createCard(section, item)).join('') :
-        `<p>No ${section} available currently</p>`;
+      elements[section].innerHTML =
+        items.length > 0
+          ? items.map((item) => createCard(section, item)).join("")
+          : `<p>No ${section} available currently</p>`
 
-      if (section === 'products') {
-        setUpProductHoverEffect();
+      if (section === "products") {
+        setUpProductHoverEffect()
       }
     }
   }
-//creates an HTML card for an item
-function createCard(section, item) {
-  const templates = {
-    workouts: () => `
+  //creates an HTML card for an item
+  function createCard(section, item) {
+    const templates = {
+      workouts: () => `
       <div class="card">
         <h3>${item.name}</h3>
         <p><strong>Category:</strong> ${item.category} | <strong>Difficulty:</strong> ${item.difficulty}</p>
@@ -634,13 +693,13 @@ function createCard(section, item) {
         <p>${item.description}</p>
         <div class="exercises">
           <h4>Exercises:</h4>
-          <ul>${item.exercises.map(ex => `<li>${ex}</li>`).join('')}</ul>
+          <ul>${item.exercises.map((ex) => `<li>${ex}</li>`).join("")}</ul>
         </div>
         <button class="complete-workout" data-id="${item.id}">Mark Complete</button>
       </div>
     `,
-    
-    nutrition: () => `
+
+      nutrition: () => `
       <div class="card">
         <h3>${item.name}</h3>
         <p><strong>Category:</strong> ${item.category}</p>
@@ -649,13 +708,13 @@ function createCard(section, item) {
         <p><strong>Macros:</strong> ${item.macros}</p>
         <div class="ingredients">
           <h4>Ingredients:</h4>
-          <ul>${item.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+          <ul>${item.ingredients.map((i) => `<li>${i}</li>`).join("")}</ul>
         </div>
         <button class="save-recipe" data-id="${item.id}">Save Recipe</button>
       </div>
     `,
-    
-    products: () => `
+
+      products: () => `
       <div class="product-card">
         <img src="${item.image}" 
         alt="${item.name}"
@@ -665,13 +724,13 @@ function createCard(section, item) {
         <p><strong>Price:</strong> $${item.price}</p>
         <div class="features">
           <h4>Features:</h4>
-          <ul>${item.features.map(f => `<li>${f}</li>`).join('')}</ul>
+          <ul>${item.features.map((f) => `<li>${f}</li>`).join("")}</ul>
         </div>
-        <p><strong>Colors:</strong> ${item.colors.join(', ')}</p>
+        <p><strong>Colors:</strong> ${item.colors.join(", ")}</p>
         <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
       </div>
-    `
-  };
-  return templates[section] ? templates[section]() : '';
-};
-});
+    `,
+    }
+    return templates[section] ? templates[section]() : ""
+  }
+})
